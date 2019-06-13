@@ -1,0 +1,106 @@
+{{- $bg := .Params.background | default "dark" }}
+
+{{/* Global resource fallback - can also be used within loops */}}
+{{- $image := .Params.branding.image -}}
+
+{{/* Do not change the following snippet */}}
+{{/* Code is duplicated throughout the code */}}
+{{- $.root.Scratch.Set "image" (printf "images/%s" $image) -}}
+
+{{/* Page specific resource */}}
+{{- $location := (printf "%s/%s" $.fallthrough.page_path $image) -}}
+{{- if (fileExists (printf "content/%s" $location)) -}}
+  {{/* special case index: trim _index/ from url */}}
+  {{- $location := strings.TrimPrefix "_index/" $location -}}
+  {{- $.root.Scratch.Set "image" $location -}}
+{{- end -}}
+
+{{/* Fragment specific resource */}}
+{{- $location := (printf "%s/%s" $.fallthrough.file_path $image) -}}
+{{- if (fileExists (printf "content/%s" $location)) -}}
+  {{/* special case index: trim _index/ from url */}}
+  {{- $location := strings.TrimPrefix "_index/" $location -}}
+  {{- $.root.Scratch.Set "image" $location -}}
+{{- end -}}
+{{/* End of do not change */}}
+
+{{- "<!-- Navigation -->" | safeHTML -}}
+<nav class="overlay navbar navbar-expand-lg py-2
+  {{- printf " bg-%s" $bg -}}
+  {{- if or (eq $bg "light") (eq $bg "white") (eq $bg "secondary") -}}
+    {{- printf " navbar-%s" "light" -}}
+  {{- else -}}
+    {{- printf " navbar-%s" "dark" -}}
+  {{- end -}}
+" id="{{ .Name }}">
+  <div class="container">
+    {{- if .Params.branding.image }}
+      <a class="navbar-brand py-0" href="{{ "#page-top" | relLangURL }}">
+        <img src="{{ $.root.Scratch.Get "image" | relURL }}" height="35" class="d-inline-block align-top" alt="{{ .Params.branding.text }}">
+      </a>
+    {{- else }}
+      <a class="navbar-brand py-0" href="{{ "#page-top" | relLangURL }}">
+        {{- .Params.branding.text -}}
+      </a>
+    {{- end }}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse justify-content-end collapse show" id="navbarCollapse">
+      <ul class="navbar-nav">
+        {{- if .Params.prepend -}}
+          {{- range sort .Params.prepend }}
+            <li class="nav-item">
+              <a href="{{ .url | relLangURL }}" {{- if hasPrefix .url "#" }} class="anchor nav-link"{{ else }} class="nav-link"{{ end }}>
+                {{ .name }}
+              </a>
+            </li>
+          {{- end -}}
+        {{- end }}
+        {{- if .Site.Menus.main -}}
+          {{- range sort .Site.Menus.main }}
+            <li class="nav-item">
+              <a href="{{ .URL | relLangURL }}" {{- if hasPrefix .URL "#" }} class="nav-link anchor"{{ else }} class="nav-link"{{ end }}>
+                {{ .Name }}
+              </a>
+            </li>
+          {{- end -}}
+        {{- end }}
+        {{- if .Params.postpend -}}
+          {{- range sort .Params.postpend }}
+            <li class="nav-item">
+              <a href="{{ .url | relLangURL }}" {{- if hasPrefix .URL "#" }} class="nav-link anchor"{{ else }} class="nav-link"{{ end }}>
+                {{ .name }}
+              </a>
+            </li>
+          {{- end -}}
+        {{- end }}
+      </ul>
+      {{- if .Site.IsMultiLingual -}}
+        {{- range .Site.Languages }}
+          <a class="btn btn-secondary p-1 m-1" href="{{ delimit (slice "/" .) "" }}" role="button">
+            {{ . }}
+          </a>
+        {{- end -}}
+      {{- end }}
+    </div>
+  </div>
+  {{- if .Params.repo_button }}
+    <div class="d-none d-lg-block pl-auto">
+      <a class="btn btn-light" href="{{ .Params.repo_button.url }}" role="button">
+        <i class="{{ printf "%s" .Params.repo_button.icon | default (printf "fab fa-github") }} mr-1"></i>
+        {{ .Params.repo_button.text | default "Star" }}
+      </a>
+    </div>
+  {{- end }}
+</nav>
+<div class="scroll-to-top bg-primary
+  {{- if not .Site.Params.fontawesome.disabled -}}
+    {{ print " has-font-icon" }}
+  {{- end -}}">
+  {{- if not .Site.Params.fontawesome.disabled -}}
+    <i class="fas fa-angle-up"></i>
+  {{- else -}}
+    Top
+  {{- end -}}
+</div>

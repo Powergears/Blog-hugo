@@ -1,0 +1,78 @@
+{{- $bg := .Params.background | default "white" }}
+
+{{ "<!-- Logos -->" | safeHTML }}
+<section id="{{ .Name }}">
+  <div class="overlay container-fluid
+    {{- printf " bg-%s" $bg -}}
+  ">
+    <div class="container py-3">
+      {{- with .Params.title }}
+        <div class="row">
+          <div class="col text-center
+            {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-%s" "secondary" -}}
+            {{- end -}}
+          ">
+            <h4>
+              {{- . | markdownify -}}
+            </h4>
+          </div>
+        </div>
+      {{- end -}}
+      {{- with .Params.subtitle }}
+        <div class="row">
+          <div class="col text-center
+            {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-muted text-%s" "secondary" -}}
+            {{- end -}}
+          ">
+            <h5>
+              {{- . | markdownify -}}
+            </h5>
+          </div>
+        </div>
+      {{- end }}
+      <div class="row justify-content-center align-items-center">
+        {{- range sort .Params.logos "weight" }}
+          {{/* Global resource fallback - can also be used within loops */}}
+          {{- $image := .image -}}
+
+          {{/* Do not change the following snippet */}}
+          {{/* Code is duplicated throughout the code */}}
+          {{- $.root.Scratch.Set "image" (printf "images/%s" $image) -}}
+
+          {{/* Page specific resource */}}
+          {{- $location := (printf "%s/%s" $.fallthrough.page_path $image) -}}
+          {{- if (fileExists (printf "content/%s" $location)) -}}
+            {{/* special case index: trim _index/ from url */}}
+            {{- $location := strings.TrimPrefix "_index/" $location -}}
+            {{- $.root.Scratch.Set "image" $location -}}
+          {{- end -}}
+
+          {{/* Fragment specific resource */}}
+          {{- $location := (printf "%s/%s" $.fallthrough.file_path $image) -}}
+          {{- if (fileExists (printf "content/%s" $location)) -}}
+            {{/* special case index: trim _index/ from url */}}
+            {{- $location := strings.TrimPrefix "_index/" $location -}}
+            {{- $.root.Scratch.Set "image" $location -}}
+          {{- end -}}
+          {{/* End of do not change */}}
+
+          <div class="col-7 col-sm-4 text-center py-2">
+            {{- if .url }}
+              <a href="{{ .url }}">
+                <img src="{{ $.root.Scratch.Get "image" | relURL }}" class="p-2 w-75" alt="{{ .text }}">
+              </a>
+            {{- else }}
+              <img src="{{ $.root.Scratch.Get "image" | relURL }}" class="p-2 w-75" alt="{{ .text }}">
+            {{- end }}
+          </div>
+        {{- end }}
+      </div>
+    </div>
+  </div>
+</section>

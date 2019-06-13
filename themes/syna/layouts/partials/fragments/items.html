@@ -1,0 +1,94 @@
+{{- $items := where (.page.Resources.Match (printf "%s/*.md" .Name)) ".Name" "ne" .self.Name -}}
+{{- $bg := .Params.background | default "light" }}
+
+{{ "<!-- Items -->" | safeHTML }}
+<section id="{{ .Name }}">
+  <div class="overlay container-fluid
+    {{- printf " bg-%s" $bg -}}
+  ">
+    <div class="container py-5">
+      {{- with .Params.title }}
+        <div class="row">
+          <div class="col text-center
+            {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-%s" "light" -}}
+            {{- end -}}
+          ">
+            <h2>
+              {{- . | markdownify -}}
+            </h2>
+          </div>
+        </div>
+      {{- end -}}
+      {{- with .Params.subtitle -}}
+        <div class="row">
+          <div class="col text-center pt-4 pb-5
+            {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-muted text-%s" "secondary" -}}
+            {{- end -}}
+          ">
+            <h5>
+              {{- . | markdownify -}}
+            </h5>
+          </div>
+        </div>
+      {{- end }}
+      <div class="row justify-content-center align-items-start">
+        {{- if eq (len $items) 0 -}}
+        <div class="alert alert-danger">
+          {{- printf "Currently there is no configured items content files present. To add new items add a content file within %s"  $.fallthrough.file_path -}}
+        </div>
+        {{- else -}}
+          {{- range $items -}}
+            {{/* Handle special case of index.md being considered an item */}}
+            {{- if not (in .Name "/index.md") -}}
+              {{- $item := .Params }}
+              <div class="col-md-4 text-center">
+                {{- if $item.icon }}
+                  <span class="fa-stack fa-3x m-2">
+                    <i class="fas fa-circle fa-stack-2x
+                      {{- if eq $bg "primary" -}}
+                        {{- printf " text-%s" "dark" -}}
+                      {{- else -}}
+                        {{- printf " text-%s" "primary" -}}
+                      {{- end -}}
+                    "></i>
+                    <i class="{{ $item.icon }} fa-stack-1x fa-inverse"></i>
+                  </span>
+                {{- end }}
+                <h4 class="mb-3
+                  {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+                    {{- printf " text-%s" "dark" -}}
+                  {{- else -}}
+                    {{- printf " text-%s" "light" -}}
+                  {{- end -}}
+                ">
+                  {{- if $item.url }}
+                    <a href="{{ $item.url | relLangURL }}" class="
+                      {{- if eq $bg "primary" -}}
+                        {{- printf " text-%s" "dark" -}}
+                      {{- end -}}
+                    ">{{ $item.title | markdownify }}</a>
+                  {{- else }}
+                    {{- $item.title | markdownify -}}
+                  {{- end }}
+                </h4>
+                <div class="
+                  {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+                    {{- printf " text-%s" "dark" -}}
+                  {{- else -}}
+                    {{- printf " text-muted text-%s" "secondary" -}}
+                  {{- end -}}
+                ">{{ .Content }}</div>
+              </div>
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      </div>
+    </div>
+  </div>
+</section>

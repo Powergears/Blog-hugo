@@ -1,0 +1,267 @@
+{{- $members := where (.page.Resources.Match (printf "%s/*.md" .Name)) ".Name" "ne" .self.Name -}}
+{{- $bg := .Params.background | default "light" }}
+
+{{ "<!-- Member -->" | safeHTML }}
+<section id="{{ .Name }}">
+  <div class="overlay container-fluid
+    {{- printf " bg-%s" $bg -}}
+  ">
+    <div class="container py-5">
+      {{- with .Params.title }}
+        <div class="row">
+          <div class="col text-center
+            {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-%s" "light" -}}
+            {{- end -}}
+          ">
+            <h2>
+              {{- . | markdownify -}}
+            </h2>
+          </div>
+        </div>
+      {{- end -}}
+      {{- with .Params.subtitle }}
+        <div class="row">
+          <div class="col text-center pt-2 pb-3
+            {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+              {{- printf " text-%s" "dark" -}}
+            {{- else -}}
+              {{- printf " text-muted text-%s" "secondary" -}}
+            {{- end -}}
+          ">
+            <h5>
+              {{- . | markdownify -}}
+            </h5>
+          </div>
+        </div>
+      {{ end }}
+      {{- if eq (len $members) 0 -}}
+        <div class="alert alert-danger text-center">
+          {{- printf "Currently there is no configured member content files present. To add new members add a content file within %s" $.fallthrough.file_path -}}
+        </div>
+      {{- else if gt $members 1 -}}
+        <div class="row justify-content-center align-items-start">
+          {{- range $members -}}
+            {{/* Handle special case of index.md being considered a member */}}
+            {{- if not (in .Name "/index.md") -}}
+              {{/* Global resource fallback - can also be used within loops */}}
+              {{- $image := .Params.image -}}
+
+              {{/* Do not change the following snippet */}}
+              {{/* Code is duplicated throughout the code */}}
+              {{- $.root.Scratch.Set "image" (printf "images/%s" $image) -}}
+              {{/* Page specific resource */}}
+              {{- $location := (printf "%s/%s" $.fallthrough.page_path $image) -}}
+              {{- if (fileExists (printf "content/%s" $location)) -}}
+              {{/* special case index: trim _index/ from url */}}
+              {{- $location := strings.TrimPrefix "_index/" $location -}}
+              {{- $.root.Scratch.Set "image" $location -}}
+              {{- end -}}
+
+              {{/* Fragment specific resource */}}
+              {{- $location := (printf "%s/%s" $.fallthrough.file_path $image) -}}
+              {{- if (fileExists (printf "content/%s" $location)) -}}
+              {{/* special case index: trim _index/ from url */}}
+              {{- $location := strings.TrimPrefix "_index/" $location -}}
+              {{- $.root.Scratch.Set "image" $location -}}
+              {{- end -}}
+              {{/* End of do not change */}}
+              {{- $member := .Params -}}
+              <div class="col-lg-4 col-md-6 col-sm-12 pt-3 pb-5 text-left text-sm-center">
+                <div class="text-center m-2">
+                  <img src="{{ $.root.Scratch.Get "image" | relURL }}" class="img-fluid rounded-circle w-75 border
+                    {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+                      {{- printf " border-%s" "dark" -}}
+                    {{- else -}}
+                      {{- printf " border-%s" "white" -}}
+                    {{- end -}}
+                  " alt=""></img>
+                </div>
+                <div class="mt-5 mb-0
+                  {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+                    {{- printf " text-%s" "dark" -}}
+                  {{- else -}}
+                    {{- printf " text-%s" "light" -}}
+                  {{- end -}}
+                ">
+                  <h2>
+                    {{- $member.title -}}
+                  </h2>
+                </div>
+                <div class="member
+                  {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+                    {{- printf " text-%s" "dark" -}}
+                  {{- else -}}
+                    {{- printf " text-muted text-%s" "secondary" -}}
+                  {{- end -}}
+                ">
+                  {{- with $member.position -}}
+                    <h5 class="mb-3">
+                      {{- . | markdownify -}}
+                    </h5>
+                  {{- end -}}
+                  {{- with $member.reports_to -}}
+                    <h6 class="font-italic mb-1">
+                      {{- i18n "member.reportsTo" }} {{ printf " %s" . | markdownify -}}
+                    </h6>
+                  {{- end -}}
+                  {{- with $member.lives_in -}}
+                    <h6 class="font-italic mb-1">
+                      {{- i18n "member.livesIn" }} {{ printf " %s" . | markdownify -}}
+                    </h6>
+                  {{- end -}}
+                  {{- if $member.scope -}}
+                    <div class="pt-3 font-weight-bold">
+                      {{- range $member.scope -}}
+                        <div>
+                          {{- . | markdownify -}}
+                        </div>
+                      {{- end -}}
+                    </div>
+                  {{- end -}}
+                  {{- if $member.icons -}}
+                  <div class="row justify-content-center pt-4">
+                    {{- range $member.icons -}}
+                      <span class="fa-stack fa-2x m-2">
+                        <a href="{{ .url }}">
+                          <i class="fas fa-circle fa-stack-2x
+                            {{- if eq $bg "primary" -}}
+                              {{- printf " text-%s" "dark" -}}
+                            {{- end -}}
+                          "></i>
+                          <i class="{{ .icon }} fa-stack-1x fa-inverse"></i>
+                        </a>
+                      </span>
+                    {{- end -}}
+                  </div>
+                  {{- end -}}
+                  {{- with .Content -}}
+                      <div class="pt-3">
+                        <div class="description">
+                          {{- . | markdownify -}}
+                        </div>
+                      </div>
+                  {{- end -}}
+                </div>
+              </div>
+            {{- end -}}
+          {{- end }}
+        </div>
+      {{- else if le $members 1 -}}
+        <div class="card p-2">
+          <div class="row m-0 justify-content-center align-items-center">
+            {{- range $members -}}
+              {{/* Handle special case of index.md being considered a member */}}
+              {{- if not (in .Name "/index.md") -}}
+                {{/* Global resource fallback - can also be used within loops */}}
+                {{- $image := .Params.image -}}
+
+                {{/* Do not change the following snippet */}}
+                {{/* Code is duplicated throughout the code */}}
+                {{- $.root.Scratch.Set "image" (printf "images/%s" $image) -}}
+
+                {{/* Page specific resource */}}
+                {{- $location := (printf "%s/%s" $.fallthrough.page_path $image) -}}
+                {{- if (fileExists (printf "content/%s" $location)) -}}
+                {{/* special case index: trim _index/ from url */}}
+                {{- $location := strings.TrimPrefix "_index/" $location -}}
+                {{- $.root.Scratch.Set "image" $location -}}
+                {{- end -}}
+
+                {{/* Fragment specific resource */}}
+                {{- $location := (printf "%s/%s" $.fallthrough.file_path $image) -}}
+                {{- if (fileExists (printf "content/%s" $location)) -}}
+                {{/* special case index: trim _index/ from url */}}
+                {{- $location := strings.TrimPrefix "_index/" $location -}}
+                {{- $.root.Scratch.Set "image" $location -}}
+                {{- end -}}
+                {{/* End of do not change */}}
+                {{- $member := .Params -}}
+                <div class="col-12 col-lg-4 p-4 text-center">
+                  <img src="{{ $.root.Scratch.Get "image" | relURL }}" class="img-fluid rounded-circle border
+                    {{- if or (eq $bg "white") (eq $bg "light") (eq $bg "secondary") (eq $bg "primary") -}}
+                      {{- printf " border-%s" "dark" -}}
+                    {{- else -}}
+                      {{- printf " border-%s" "white" -}}
+                    {{- end -}}
+                  " alt=""></img>
+                </div>
+                <div class="col-12 col-lg-8 pb-4 pt-0 pl-lg-5 pt-lg-4 text-center text-lg-left">
+                  <div class="member
+                    {{- if or (eq $bg "secondary") (eq $bg "primary") -}}
+                      {{- printf " text-%s" "dark" -}}
+                    {{- else -}}
+                      {{- printf " text-muted text-%s" "secondary" -}}
+                    {{- end -}}
+                  ">
+                    <div class="mb-3 text-dark">
+                      <h1>
+                        {{- $member.title -}}
+                      </h1>
+                      {{- with $member.position -}}
+                        <h5 class="mb-1">
+                          {{- . | markdownify -}}
+                        </h5>
+                      {{- end -}}
+                      {{- with $member.company -}}
+                        <h6 class="mb-1">
+                          {{- . | markdownify -}}
+                        </h6>
+                      {{- end -}}
+                      {{- with $member.reports_to -}}
+                        <h6 class="font-italic mb-1">
+                          {{- i18n "member.reportsTo" }} {{ printf " %s" . | markdownify -}}
+                        </h6>
+                      {{- end -}}
+                      {{- with $member.lives_in -}}
+                        <h6 class="font-italic mb-0">
+                          {{- i18n "member.livesIn" }} {{ printf " %s" . | markdownify -}}
+                        </h6>
+                      {{- end -}}
+                    </div>
+                    {{- if $member.scope -}}
+                      <div class="mt-3 font-weight-bold">
+                        {{- range $member.scope -}}
+                          <div>
+                            {{- . | markdownify -}}
+                          </div>
+                        {{- end -}}
+                      </div>
+                    {{- end -}}
+                    {{- if $member.icons -}}
+                      <div class="col-12 text-center">
+                        <div class="row justify-content-lg-start justify-content-center py-2">
+                          {{- range $member.icons -}}
+                            <span class="fa-stack fa-2x m-2">
+                              <a href="{{ .url }}">
+                                <i class="fas fa-circle fa-stack-2x
+                                  {{- if eq $bg "primary" -}}
+                                    {{- printf " text-%s" "dark" -}}
+                                  {{- end -}}
+                                "></i>
+                                <i class="{{ .icon }} fa-stack-1x fa-inverse"></i>
+                              </a>
+                            </span>
+                          {{- end -}}
+                        </div>
+                      </div>
+                    {{- end -}}
+                  </div>
+                </div>
+                {{- with .Content -}}
+                  <div class="col-12 p-4 text-center text-lg-left">
+                    <div class="description">
+                      {{- . | markdownify -}}
+                    </div>
+                  </div>
+                {{- end -}}
+              {{- end -}}
+            {{- end }}
+          </div>
+        </div>
+      {{- end -}}
+    </div>
+  </div>
+</section>

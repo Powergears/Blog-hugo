@@ -1,0 +1,4 @@
+baseURL = "http://powergears.github.io/"
+languageCode = "en-us"
+title = "Bens blog"
+theme = "ananke"
