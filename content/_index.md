@@ -2,6 +2,6 @@
 title: Bens blog
 
 
-description: Bens blog
+description: Die Startseite
 
 ---
