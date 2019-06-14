@@ -1,5 +1,5 @@
 ---
-title: Kontakte
+title: Kontakt
 
 featured_image: "images/notebook.jpg"
 omit_header_text: true
