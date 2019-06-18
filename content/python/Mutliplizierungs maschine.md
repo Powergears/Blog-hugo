@@ -1,6 +1,6 @@
 ---
 title: "Python Multiplikation"
-date: 2019-06-9T13:22:40+02:00
+date: 2019-06-09T13:22:40+02:00
 draft: false
 ---
 
