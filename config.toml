@@ -15,6 +15,6 @@ pygmentsCodeFences = true
   linkedin = ""
   mastodon = ""
   # choose a background color from any on this page: http://tachyons.io/docs/themes/skins/ and preface it with "bg-"
-  background_color_class = "bg-black"
+  background_color_class = "bg-dark-green"
   featured_image = "/images/harold-image.jpg"
   recent_posts_number = 5
