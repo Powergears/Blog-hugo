@@ -19,7 +19,7 @@ Mein größtes Problem bei dieser Aufgabe war es, mein noch relativ neues know-h
 
 
 
-Im genaueren waren die Variablen für die vom User angegebenen zahlen ein Problem. hier ist die lösung die ich gefunden habe:
+Im genaueren waren die Variablen für die vom User angegebenen zahlen ein Problem. Hier ist die Lösung die ich gefunden habe:
 
 ```python
 text = input("Please write a first number: ")
@@ -28,8 +28,8 @@ text2 = input("Please write a second number: ")
 
 
 
-es fiel mir ziemlich schwer einen String zu formen, und ihn anzuwenden.
-Aber auch dafür habe ich eine lösung gefunden:
+Es fiel mir ziemlich schwer einen String zu formen, und ihn anzuwenden.
+Aber auch dafür habe ich eine Lösung gefunden:
 
 ```python
 text3 = text * text2
