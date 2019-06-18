@@ -1,7 +1,7 @@
 ---
 title: Kontakt
 
-featured_image: "images/notebook.jpg"
+featured_image: "harold-image.jpg"
 omit_header_text: true
 description: We'd love to hear from you
 type: page
