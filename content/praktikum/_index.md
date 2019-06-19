@@ -1,7 +1,6 @@
 ---
-title: Meine Posts
-menu:
- main: {}
+title: Mein Praktikum
+
 
 
 description: Bens Blog

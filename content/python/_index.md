@@ -1,7 +1,5 @@
 ---
 title: Python
-menu:
- main: {}
 
 
 description:
