@@ -1,5 +1,5 @@
 ---
-title: "Python zersetzungs-Maschine"
+title: "Python Hochzähl-Maschine"
 date: 2019-06-09T13:22:40+02:00
 draft: false
 ---
