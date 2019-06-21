@@ -3,8 +3,5 @@ title: Mein Praktikum
 
 
 
-description: Bens Blog
-
+description: Artikel die ich während meines Praktikums bei Otto geschrieben habe.
 ---
-
-# Bens Blog
