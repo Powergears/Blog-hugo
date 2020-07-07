@@ -37,7 +37,7 @@
     "foreman": "^3.0.0",
     "form-validator-simple": "^0.0.11",
     "i": "^0.3.6",
-    "npm": "^6.1.0",
+    "npm": "^6.14.6",
     "particles.js": "^2.0.0",
     "popper.js": "^1.14.3"
   }
